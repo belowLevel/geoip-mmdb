@@ -15,17 +15,16 @@ import (
 )
 
 var (
-	writer *mmdbwriter.Tree
+	writer    *mmdbwriter.Tree
 	AsnBlocks = make([]*AsnBlock, 0)
 )
 
-
 type AsnBlock struct {
-	Network string
+	Network                      string
 	AutonomousSystemOrganization string
 }
 
-func ReadAsnBlockCsvFile(filename string)  {
+func ReadAsnBlockCsvFile(filename string) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +45,7 @@ func ReadAsnBlockCsvFile(filename string)  {
 	}
 }
 
-func ReadCidrTxt(txtfile string, asnName string)  {
+func ReadCidrTxt(txtfile string, asnName string) {
 	f, err := os.Open(txtfile)
 	if err != nil {
 		log.Panic(err)
@@ -73,7 +72,7 @@ func ReadCidrTxt(txtfile string, asnName string)  {
 	}
 }
 
-func Generatemmdb(pathbase string)  {
+func Generatemmdb(pathbase string) {
 	readFiles(pathbase)
 
 	var err error
@@ -89,7 +88,7 @@ func Generatemmdb(pathbase string)  {
 	for _, v := range AsnBlocks {
 		_, ipnet, err := net.ParseCIDR(v.Network)
 		if err != nil {
-			log.Panic(err)
+			log.Panicf("%v, %v", err, v)
 		}
 		insertData(v, ipnet)
 	}
@@ -105,25 +104,25 @@ func Generatemmdb(pathbase string)  {
 }
 
 func readFiles(pathBase string) {
-	ReadAsnBlockCsvFile(filepath.Join(pathBase,"GeoLite2-ASN-Blocks-IPv4.csv"))
-	ReadAsnBlockCsvFile(filepath.Join(pathBase,"GeoLite2-ASN-Blocks-IPv6.csv"))
-	ReadCidrTxt(filepath.Join(pathBase,"cernet_cidr.txt"), "中国教育网")
-	ReadCidrTxt(filepath.Join(pathBase,"cernet_ipv6.txt"), "中国教育网")
-	ReadCidrTxt(filepath.Join(pathBase,"chinatelecom_cidr.txt"), "中国电信")
-	ReadCidrTxt(filepath.Join(pathBase,"chinatelecom_ipv6.txt"), "中国电信")
-	ReadCidrTxt(filepath.Join(pathBase,"cmcc_cidr.txt"), "中国移动")
-	ReadCidrTxt(filepath.Join(pathBase,"cmcc_ipv6.txt"), "中国移动")
-	ReadCidrTxt(filepath.Join(pathBase,"crtc_cidr.txt"), "中国铁通")
-	ReadCidrTxt(filepath.Join(pathBase,"crtc_ipv6.txt"), "中国铁通")
-	ReadCidrTxt(filepath.Join(pathBase,"gwbn_cidr.txt"), "长城宽带/鹏博士")
-	ReadCidrTxt(filepath.Join(pathBase,"gwbn_ipv6.txt"), "长城宽带/鹏博士")
-	ReadCidrTxt(filepath.Join(pathBase,"unicom_cnc_cidr.txt"), "中国联通/网通")
-	ReadCidrTxt(filepath.Join(pathBase,"unicom_cnc_ipv6.txt"), "中国联通/网通")
+	ReadAsnBlockCsvFile(filepath.Join(pathBase, "GeoLite2-ASN-Blocks-IPv4.csv"))
+	ReadAsnBlockCsvFile(filepath.Join(pathBase, "GeoLite2-ASN-Blocks-IPv6.csv"))
+	ReadCidrTxt(filepath.Join(pathBase, "cernet_cidr.txt"), "中国教育网")
+	ReadCidrTxt(filepath.Join(pathBase, "cernet_ipv6.txt"), "中国教育网")
+	ReadCidrTxt(filepath.Join(pathBase, "chinatelecom_cidr.txt"), "中国电信")
+	ReadCidrTxt(filepath.Join(pathBase, "chinatelecom_ipv6.txt"), "中国电信")
+	ReadCidrTxt(filepath.Join(pathBase, "cmcc_cidr.txt"), "中国移动")
+	ReadCidrTxt(filepath.Join(pathBase, "cmcc_ipv6.txt"), "中国移动")
+	ReadCidrTxt(filepath.Join(pathBase, "crtc_cidr.txt"), "中国铁通")
+	ReadCidrTxt(filepath.Join(pathBase, "crtc_ipv6.txt"), "中国铁通")
+	ReadCidrTxt(filepath.Join(pathBase, "gwbn_cidr.txt"), "长城宽带/鹏博士")
+	ReadCidrTxt(filepath.Join(pathBase, "gwbn_ipv6.txt"), "长城宽带/鹏博士")
+	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc_cidr.txt"), "中国联通/网通")
+	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc_ipv6.txt"), "中国联通/网通")
 }
 
 func insertData(asn *AsnBlock, ipnet *net.IPNet) {
 	data := mmdbtype.Map{
-		"autonomous_system_organization":   mmdbtype.String(asn.AutonomousSystemOrganization),
+		"autonomous_system_organization": mmdbtype.String(asn.AutonomousSystemOrganization),
 	}
 	err := writer.Insert(ipnet, data)
 	if err != nil {
@@ -140,7 +139,7 @@ func str2int(str string) int {
 }
 
 func str2float64(str string) float64 {
-	f ,err := strconv.ParseFloat(str,65)
+	f, err := strconv.ParseFloat(str, 65)
 	if err != nil {
 		return 0.0
 	}
@@ -148,6 +147,6 @@ func str2float64(str string) float64 {
 }
 
 func getaIp(cidr string) string {
-	idx := strings.LastIndex(cidr,"/")
+	idx := strings.LastIndex(cidr, "/")
 	return cidr[:idx]
 }
