@@ -88,7 +88,7 @@ func Generatemmdb(pathbase string) {
 	for _, v := range AsnBlocks {
 		_, ipnet, err := net.ParseCIDR(v.Network)
 		if err != nil {
-			log.Panicf("%v, %v", err, v)
+			log.Panicf("%v %v", err, v)
 		}
 		insertData(v, ipnet)
 	}
@@ -106,7 +106,7 @@ func Generatemmdb(pathbase string) {
 func readFiles(pathBase string) {
 	ReadAsnBlockCsvFile(filepath.Join(pathBase, "GeoLite2-ASN-Blocks-IPv4.csv"))
 	ReadAsnBlockCsvFile(filepath.Join(pathBase, "GeoLite2-ASN-Blocks-IPv6.csv"))
-	ReadCidrTxt(filepath.Join(pathBase, "cernet_cidr.txt"), "中国教育网")
+	ReadCidrTxt(filepath.Join(pathBase, "cernet.txt"), "中国教育网")
 	ReadCidrTxt(filepath.Join(pathBase, "cernet_ipv6.txt"), "中国教育网")
 	ReadCidrTxt(filepath.Join(pathBase, "chinatelecom_cidr.txt"), "中国电信")
 	ReadCidrTxt(filepath.Join(pathBase, "chinatelecom_ipv6.txt"), "中国电信")
