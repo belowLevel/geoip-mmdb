@@ -14,22 +14,22 @@ import (
 )
 
 var (
-	writer *mmdbwriter.Tree
+	writer        *mmdbwriter.Tree
 	CountryBlocks = make(map[string]*CountryBlock)
-	Locations = make(map[string]*Location)
-	cnCidrs = make([]string, 0)
+	Locations     = make(map[string]*Location)
+	cnCidrs       = make([]string, 0)
 )
 
 type CountryBlock struct {
-	NetWork string
+	NetWork   string
 	GeoNameId string
 }
 type Location struct {
-	GeonameId string
+	GeonameId      string
 	CountryIsoCode string
 }
 
-func ReadCountryBlockCsvFile(filename string)  {
+func ReadCountryBlockCsvFile(filename string) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +50,7 @@ func ReadCountryBlockCsvFile(filename string)  {
 	}
 }
 
-func ReadLocationBlockCsvFile(filename string)  {
+func ReadLocationBlockCsvFile(filename string) {
 	csvFile, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -71,7 +71,7 @@ func ReadLocationBlockCsvFile(filename string)  {
 	}
 }
 
-func ReadCidrTxt(txtfile string)  {
+func ReadCidrTxt(txtfile string) {
 	f, err := os.Open(txtfile)
 	if err != nil {
 		log.Panic(err)
@@ -93,7 +93,7 @@ func ReadCidrTxt(txtfile string)  {
 	}
 }
 
-func Generatemmdb(pathbase string)  {
+func Generatemmdb(pathbase string) {
 	readFiles(pathbase)
 
 	var err error
@@ -148,11 +148,11 @@ func getLocation(v *CountryBlock, k string) *Location {
 
 func insertData(iosCode string, ipnet *net.IPNet) {
 	data := mmdbtype.Map{
-		"country":            mmdbtype.Map{
-			"iso_code":             mmdbtype.String(iosCode),
+		"country": mmdbtype.Map{
+			"iso_code": mmdbtype.String(iosCode),
 		},
-		"registered_country":  mmdbtype.Map{
-			"iso_code":             mmdbtype.String(iosCode),
+		"registered_country": mmdbtype.Map{
+			"iso_code": mmdbtype.String(iosCode),
 		},
 	}
 	err := writer.Insert(ipnet, data)
@@ -165,18 +165,17 @@ func insertCnCidrs() {
 	for _, v := range cnCidrs {
 		_, ipnet, err := net.ParseCIDR(v)
 		if err != nil {
-			log.Panic(err)
+			log.Panicf("%v %v", err, v)
 		}
 		insertData("CN", ipnet)
 	}
 }
 
 func readFiles(pathBase string) {
-	ReadCountryBlockCsvFile(filepath.Join(pathBase,"GeoLite2-Country-Blocks-IPv4.csv"))
-	ReadCountryBlockCsvFile(filepath.Join(pathBase,"GeoLite2-Country-Blocks-IPv6.csv"))
-	ReadLocationBlockCsvFile(filepath.Join(pathBase,"GeoLite2-Country-Locations-zh-CN.csv"))
-	ReadCidrTxt(filepath.Join(pathBase,"all_cn_cidr.txt"))
-	ReadCidrTxt(filepath.Join(pathBase,"all_cn_ipv6.txt"))
-	ReadCidrTxt(filepath.Join(pathBase,"china_ip_list.txt"))
+	ReadCountryBlockCsvFile(filepath.Join(pathBase, "GeoLite2-Country-Blocks-IPv4.csv"))
+	ReadCountryBlockCsvFile(filepath.Join(pathBase, "GeoLite2-Country-Blocks-IPv6.csv"))
+	ReadLocationBlockCsvFile(filepath.Join(pathBase, "GeoLite2-Country-Locations-zh-CN.csv"))
+	ReadCidrTxt(filepath.Join(pathBase, "all_cn.txt"))
+	ReadCidrTxt(filepath.Join(pathBase, "all_cn_ipv6.txt"))
+	ReadCidrTxt(filepath.Join(pathBase, "china_ip_list.txt"))
 }
-
