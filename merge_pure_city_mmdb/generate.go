@@ -468,8 +468,11 @@ func SendIp2RegionCity() {
 
 			ip2 := []string{
 				int2ip(i).String(),
+				//city[2],
+				//city[3],
+				//city[4],
+				city[4],
 				city[2],
-				city[3],
 				city[4],
 			}
 			ip2CityChannel <- ip2

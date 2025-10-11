@@ -72,7 +72,7 @@ func TestReadContry(t *testing.T) {
 }
 
 func TestConvertDbToTxt(t *testing.T) {
-	var dbPath = "ip2region.xdb"
+	var dbPath = "ip2region_v4.xdb"
 	var txtFileName = "1.txt"
 	errMsg := merge_ip2region.ConvertDbToTxt(Ip2regionTool.ConvertDbToTxt_Req{
 		DbFileName:  dbPath,
