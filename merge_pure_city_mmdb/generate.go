@@ -473,7 +473,7 @@ func SendIp2RegionCity() {
 				//city[4],
 				city[4],
 				city[2],
-				city[4],
+				city[5],
 			}
 			ip2CityChannel <- ip2
 		}
