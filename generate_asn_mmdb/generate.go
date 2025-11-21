@@ -114,10 +114,12 @@ func readFiles(pathBase string) {
 	ReadCidrTxt(filepath.Join(pathBase, "cmcc_ipv6.txt"), "中国移动")
 	//ReadCidrTxt(filepath.Join(pathBase, "crtc.txt"), "中国铁通")
 	//ReadCidrTxt(filepath.Join(pathBase, "crtc_ipv6.txt"), "中国铁通")
-	ReadCidrTxt(filepath.Join(pathBase, "gwbn.txt"), "长城宽带/鹏博士")
-	ReadCidrTxt(filepath.Join(pathBase, "gwbn_ipv6.txt"), "长城宽带/鹏博士")
-	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc.txt"), "中国联通/网通")
-	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc_ipv6.txt"), "中国联通/网通")
+	ReadCidrTxt(filepath.Join(pathBase, "gwbn.txt"), "电信通/长城宽带/鹏博士")
+	ReadCidrTxt(filepath.Join(pathBase, "gwbn_ipv6.txt"), "电信通/长城宽带/鹏博士")
+	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc.txt"), "中国联通")
+	ReadCidrTxt(filepath.Join(pathBase, "unicom_cnc_ipv6.txt"), "中国联通")
+	ReadCidrTxt(filepath.Join(pathBase, "chinabtn.txt"), "中国广电")
+	ReadCidrTxt(filepath.Join(pathBase, "chinabtn_ipv6.txt"), "中国广电")
 }
 
 func insertData(asn *AsnBlock, ipnet *net.IPNet) {

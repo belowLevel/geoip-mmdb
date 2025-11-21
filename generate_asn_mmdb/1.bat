@@ -11,3 +11,5 @@ curl -O https://ispip.clang.cn/cernet.txt
 curl -O https://ispip.clang.cn/cernet_ipv6.txt
 curl -O https://ispip.clang.cn/gwbn.txt
 curl -O https://ispip.clang.cn/gwbn_ipv6.txt
+curl -O https://ispip.clang.cn/chinabtn.txt
+curl -O https://ispip.clang.cn/chinabtn_ipv6.txt
