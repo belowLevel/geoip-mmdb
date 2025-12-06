@@ -157,7 +157,7 @@ func ReadIp2RegionCsvFile(filename string) {
 	}
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
-	reader.Read()
+	//reader.Read()
 	for {
 		strs, err := reader.Read()
 		if err == io.EOF {
@@ -776,7 +776,7 @@ func fixCoor(city *reader.City) {
 }
 
 func trimLocationStr(location *string) {
-	if location == nil || *location != "" {
+	if location == nil || *location == "" {
 		return
 	}
 	pr := []rune(*location)
