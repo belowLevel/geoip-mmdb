@@ -7,7 +7,6 @@ import (
 	"geoip-mmdb/generate_country_mmdb"
 	"geoip-mmdb/merge_ip2region"
 	"geoip-mmdb/merge_pure_city_mmdb"
-	"geoip-mmdb/pureip"
 	"geoip-mmdb/reader"
 	"github.com/orestonce/Ip2regionTool"
 	"github.com/stretchr/testify/require"
@@ -27,10 +26,6 @@ func Test_Generate_City(t *testing.T) {
 
 func Test_Generate_Country(t *testing.T) {
 	generate_country_mmdb.Generatemmdb("../generate_country_mmdb")
-}
-
-func TestConvert(t *testing.T) {
-	pureip.ConvertTxt2Csv("../")
 }
 
 func Test_Generate_Merge_City(t *testing.T) {

@@ -23,17 +23,15 @@ var (
 	cityIpBlocks  = make(map[string]*CityIpBlock)
 	CityLocations = make(map[string]*CityLocation)
 
-	PureAreas      = make([][]string, 0)
 	Ip2RegionAreas = make([][]string, 0)
 	MdbAreas       = make([]*MdbCN, 0)
 
 	writer *mmdbwriter.Tree
 
-	done            = make(chan struct{}, 0)
-	pureCityChannel = make(chan []string, 1000)
-	ip2CityChannel  = make(chan []string, 1000)
-	mdbCityChannel  = make(chan *MdbCN, 1000)
-	mergerChannel   = make(chan *MdbCN, 1000)
+	done           = make(chan struct{}, 0)
+	ip2CityChannel = make(chan []string, 1000)
+	mdbCityChannel = make(chan *MdbCN, 1000)
+	mergerChannel  = make(chan *MdbCN, 1000)
 )
 
 type CityIpBlock struct {
@@ -151,23 +149,6 @@ func ReadCityLocationCsvFile(filename string) {
 		CityLocations[citylocation.GeoNameId] = &citylocation
 	}
 }
-func ReadPureCsvFile(filename string) {
-	csvFile, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer csvFile.Close()
-	reader := csv.NewReader(csvFile)
-	reader.Read()
-	for {
-		strs, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
-
-		PureAreas = append(PureAreas, strs)
-	}
-}
 
 func ReadIp2RegionCsvFile(filename string) {
 	csvFile, err := os.Open(filename)
@@ -228,39 +209,6 @@ func Generatemmdb2(pathbase string) {
 			log.Panic(err)
 		}
 		insertData(ipnet, city)
-	}
-
-	for _, pureCity := range PureAreas {
-		if pureCity[4] != "" {
-			startInt, err := ip2Uint32(pureCity[0])
-			if err != nil {
-				log.Panic(err)
-			}
-			endInt, err := ip2Uint32(pureCity[1])
-			if err != nil {
-				log.Panic(err)
-			}
-			cidrstr := getCidrStr(startInt, endInt)
-			_, ipnet, err := net.ParseCIDR(cidrstr)
-			if err != nil {
-				log.Panic(err)
-			}
-			city := reader.City{
-				Name:           pureCity[3],
-				ContinentName:  "亚洲",
-				CountryName:    "中国",
-				CountryIsoCode: "CN",
-				Location: struct {
-					AccuracyRadius uint16  `maxminddb:"accuracy_radius"`
-					Latitude       float64 `maxminddb:"latitude"`
-					Longitude      float64 `maxminddb:"longitude"`
-				}{},
-				Subdivision1Name: pureCity[2],
-				Subdivision2Name: pureCity[4],
-			}
-			insertData(ipnet, &city)
-		}
-
 	}
 
 	fh, err := os.Create("../GeoLite2-merge-City.mmdb")
@@ -329,12 +277,9 @@ func Generatemmdb(pathbase string) {
 
 	SortAscMdbAreaByIp()
 	log.Println("sorted mdb cities")
-	SortAscPureArea()
-	log.Println("sorted pure cities")
 	SortAscIp2RegionArea()
 
 	go SendMdbCity()
-	go SendPureCity()
 	go SendIp2RegionCity()
 	go MergeCity()
 	go HandMergeChannel()
@@ -370,25 +315,10 @@ func SortAscMdbAreaByIp() {
 	})
 }
 
-func SortAscPureArea() {
-	sort.Slice(PureAreas, func(i, j int) bool {
-		later := PureAreas[i]
-		former := PureAreas[j]
-		laterIp, err := ip2Uint32(later[0])
-		if err != nil {
-			log.Panic(err)
-		}
-		formerIp, err := ip2Uint32(former[0])
-		if err != nil {
-			log.Panic(err)
-		}
-		return laterIp < formerIp
-	})
-}
 func SortAscIp2RegionArea() {
 	sort.Slice(Ip2RegionAreas, func(i, j int) bool {
-		later := PureAreas[i]
-		former := PureAreas[j]
+		later := Ip2RegionAreas[i]
+		former := Ip2RegionAreas[j]
 		laterIp, err := ip2Uint32(later[0])
 		if err != nil {
 			log.Panic(err)
@@ -420,34 +350,6 @@ func SendMdbCity() {
 	}
 	close(mdbCityChannel)
 	log.Printf("send mdc city finished")
-}
-func SendPureCity() {
-	for _, city := range PureAreas {
-		pIpStartStr := city[0]
-		pIpEndStr := city[1]
-
-		pMin, err := ip2Uint32(pIpStartStr)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		pMax, err := ip2Uint32(pIpEndStr)
-		if err != nil {
-			log.Panic(err)
-		}
-		for i := pMin; i <= pMax; i++ {
-
-			pureCity := []string{
-				int2ip(i).String(),
-				city[2],
-				city[3],
-				city[4],
-			}
-			pureCityChannel <- pureCity
-		}
-	}
-	close(pureCityChannel)
-	log.Printf("send pure city finished")
 }
 
 func SendIp2RegionCity() {
@@ -706,7 +608,6 @@ func readFiles(pathbase string) {
 	ReadCityIpBlockCsvFile(filepath.Join(pathbase, "GeoLite2-City-Blocks-IPv4.csv"))
 	ReadCityIpBlockCsvFile(filepath.Join(pathbase, "GeoLite2-City-Blocks-IPv6.csv"))
 	ReadCityLocationCsvFile(filepath.Join(pathbase, "GeoLite2-City-Locations-zh-CN.csv"))
-	ReadPureCsvFile(filepath.Join(pathbase, "pure.csv"))
 	ReadIp2RegionCsvFile(filepath.Join(pathbase, "ip2region.csv"))
 }
 
@@ -869,5 +770,28 @@ func fixCoor(city *reader.City) {
 	if err == nil {
 		city.Location.Latitude = coor[1]
 		city.Location.Longitude = coor[0]
+		trimLocationStr(&city.Name)
+		trimLocationStr(&city.Subdivision1Name)
+	}
+}
+
+func trimLocationStr(location *string) {
+	if location == nil || *location != "" {
+		return
+	}
+	pr := []rune(*location)
+	prl := len(pr)
+	if prl > 0 {
+		if string(pr[prl-1]) == "省" {
+			*location = string(pr[0 : prl-1])
+		}
+		if string(pr[prl-1]) == "市" {
+			*location = string(pr[0 : prl-1])
+		}
+		if prl > 3 {
+			if string(pr[prl-3:]) == "自治区" {
+				*location = string(pr[0 : prl-3])
+			}
+		}
 	}
 }

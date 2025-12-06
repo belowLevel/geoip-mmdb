@@ -71,8 +71,6 @@ runs:
 
         ls -alh
         pwd
-        go test -run TestConvert generate_test/generate_test.go
-        cp pure.csv merge_pure_city_mmdb/
 
         go test -run TestConvertDbToTxt generate_test/generate_test.go
         cp ip2region.csv merge_pure_city_mmdb/
