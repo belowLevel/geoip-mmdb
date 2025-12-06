@@ -482,11 +482,6 @@ func SendIp2RegionCity() {
 	log.Printf("send ip2region city finished")
 }
 func MergeCity() {
-	var pureCity []string
-	var pureChannelDone = false
-	var pureIpint uint32 = 0
-	var getPureCity = true
-
 	var mdbCity *MdbCN
 	var mdbCityChannelDone = false
 	var mdbIpInt uint32 = 0
@@ -498,12 +493,6 @@ func MergeCity() {
 	var getip2City = true
 
 	for {
-		if getPureCity {
-			pureCity = <-pureCityChannel
-		}
-		if pureCity == nil {
-			pureChannelDone = true
-		}
 		if getMdbCity {
 			mdbCity = <-mdbCityChannel
 		}
@@ -516,29 +505,17 @@ func MergeCity() {
 		if ip2 == nil {
 			ip2ChannelDone = true
 		}
-		if pureChannelDone && mdbCityChannelDone && ip2ChannelDone {
+		if mdbCityChannelDone && ip2ChannelDone {
 			break
 		}
 
-		if !pureChannelDone && !mdbCityChannelDone && !ip2ChannelDone {
-			pureIpStr := pureCity[0]
-			pureProvince := pureCity[1]
-			pureCit := pureCity[2]
-			pureDistrict := pureCity[3]
-
+		if !mdbCityChannelDone && !ip2ChannelDone {
 			ip2IpStr := ip2[0]
 			ip2Province := ip2[1]
 			ip2Cit := ip2[2]
 			ip2District := ip2[3]
 
 			var err error
-			if getPureCity {
-				pureIpint, err = ip2Uint32(pureIpStr)
-
-				if err != nil {
-					log.Panic(err)
-				}
-			}
 			if getMdbCity {
 				mdbIpInt, err = ip2Uint32(mdbCity.NetWork)
 				if err != nil {
@@ -552,9 +529,8 @@ func MergeCity() {
 				}
 			}
 
-			if pureIpint == mdbIpInt && pureIpint == ip2Ipint {
+			if mdbIpInt == ip2Ipint {
 				getMdbCity = true
-				getPureCity = true
 				getip2City = true
 				newCity := &reader.City{
 					Name:           mdbCity.City.Name,
@@ -578,33 +554,26 @@ func MergeCity() {
 					City:    newCity,
 				}
 				district := newCity.Subdivision2Name
-				if pureDistrict != "" {
-					district = pureDistrict
-				} else if ip2District != "" {
+				if ip2District != "" {
 					district = ip2District
 				}
 				newCity.Subdivision2Name = district
 
 				cit := newCity.Name
-				if pureCit != "" {
-					cit = pureCit
-				} else if ip2Cit != "" {
+				if ip2Cit != "" {
 					cit = ip2Cit
 				}
 				newCity.Name = cit
 
 				prov := newCity.Subdivision1Name
-				if pureProvince != "" {
-					prov = pureProvince
-				} else if ip2Province != "" {
+				if ip2Province != "" {
 					prov = ip2Province
 				}
 				newCity.Subdivision1Name = prov
 
 				mergerChannel <- city
 			} else {
-
-				ipints := [3]uint32{pureIpint, mdbIpInt, ip2Ipint}
+				ipints := [2]uint32{mdbIpInt, ip2Ipint}
 				slices.Sort(ipints[:])
 
 				newCity := &reader.City{
@@ -629,18 +598,6 @@ func MergeCity() {
 					City:    newCity,
 				}
 
-				if pureIpint == mdbIpInt {
-					if pureDistrict != "" {
-						newCity.Subdivision2Name = pureDistrict
-					}
-					if pureProvince != "" {
-						newCity.Subdivision1Name = pureProvince
-					}
-					if pureCit != "" {
-						newCity.Name = pureCit
-					}
-				}
-
 				if ip2Ipint == mdbIpInt {
 					if ip2District != "" {
 						newCity.Subdivision2Name = ip2District
@@ -652,27 +609,17 @@ func MergeCity() {
 						newCity.Name = ip2Cit
 					}
 				}
-				getPureCity = false
 				getMdbCity = false
 				getip2City = false
-				if ipints[0] == pureIpint {
-					getPureCity = true
-				}
 				if ipints[0] == mdbIpInt {
 					getMdbCity = true
 				}
 				if ipints[0] == ip2Ipint {
 					getip2City = true
 				}
-
 				mergerChannel <- city
-
 			}
 		} else if mdbCityChannelDone {
-			if !pureChannelDone {
-				getPureCity = true
-				<-pureCityChannel
-			}
 			if !ip2ChannelDone {
 				getip2City = true
 				<-ip2CityChannel
@@ -680,10 +627,6 @@ func MergeCity() {
 		} else if !mdbCityChannelDone {
 			getMdbCity = true
 			mergerChannel <- mdbCity
-			if !pureChannelDone {
-				getPureCity = true
-				<-pureCityChannel
-			}
 			if !ip2ChannelDone {
 				getip2City = true
 				<-ip2CityChannel
