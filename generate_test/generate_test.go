@@ -67,13 +67,14 @@ func TestReadContry(t *testing.T) {
 }
 
 func TestConvertDbToTxt(t *testing.T) {
-	var dbPath = "ip2region_v4.xdb"
-	var txtFileName = "1.txt"
-	errMsg := merge_ip2region.ConvertDbToTxt(Ip2regionTool.ConvertDbToTxt_Req{
-		DbFileName:  dbPath,
-		TxtFileName: txtFileName,
-		Merge:       true,
-		DbVersion:   2,
+	errMsg := merge_ip2region.ConvertDbToTxt(Ip2regionTool.ConvertDbReq{
+		FromName:         "ip2region_v4.xdb",
+		FromType:         "Linsoul2014v2, Linsoul2014 第二版xdb格式",
+		ToName:           "../ip2region.csv",
+		ToType:           "csv,纯文本格式",
+		VerifyFullUint32: false,
+		FillFullUint32:   false,
+		MergeIpRange:     false,
 	})
 	if errMsg != `` {
 		fmt.Println(errMsg)

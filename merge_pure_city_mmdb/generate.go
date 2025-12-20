@@ -354,6 +354,9 @@ func SendMdbCity() {
 
 func SendIp2RegionCity() {
 	for _, city := range Ip2RegionAreas {
+		if city[2] != "中国" {
+			continue
+		}
 		pIpStartStr := city[0]
 		pIpEndStr := city[1]
 
@@ -366,16 +369,20 @@ func SendIp2RegionCity() {
 		if err != nil {
 			log.Panic(err)
 		}
+		p := city[3]
+		if p == "0" {
+			p = ""
+		}
+		c := city[4]
+		if c == "0" {
+			c = ""
+		}
 		for i := pMin; i <= pMax; i++ {
-
 			ip2 := []string{
 				int2ip(i).String(),
-				//city[2],
-				//city[3],
-				//city[4],
-				city[4],
-				city[2],
-				city[5],
+				p,
+				c,
+				"",
 			}
 			ip2CityChannel <- ip2
 		}
