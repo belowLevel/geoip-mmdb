@@ -5,7 +5,7 @@ go 1.24.4
 replace github.com/orestonce/Ip2regionTool => github.com/asyning/Ip2regionTool v0.0.0-20251220091231-fd0a79882950
 
 require (
-	github.com/belowLevel/find-domain v1.0.6
+	github.com/belowLevel/find-domain v0.0.0-20261010173908-143ff4f76f75
 	github.com/maxmind/mmdbwriter v0.0.0-20220830183856-fffdfa44ff0b
 	github.com/orestonce/Ip2regionTool v1.6.1
 	github.com/oschwald/maxminddb-golang v1.13.0

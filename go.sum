@@ -1,7 +1,7 @@
 github.com/asyning/Ip2regionTool v0.0.0-20251220091231-fd0a79882950 h1:u7X8dMxWu14gdGwpEulpO3Em2cAl7mZZOLyHoWkjP6o=
 github.com/asyning/Ip2regionTool v0.0.0-20251220091231-fd0a79882950/go.mod h1:OQZfIirGKYvq0CDNmJNRBqGVTCh/kJXZh1/+PEvU76c=
-github.com/belowLevel/find-domain v1.0.6 h1:faTb9cib5tJs9bV2M/8KpwAsOuiOZkcG6nvnrl4QUMc=
-github.com/belowLevel/find-domain v1.0.6/go.mod h1:6emtBUDxCHNJ8fjVzVzNWu+31r3LW5kefSTTALqaX1M=
+github.com/belowLevel/find-domain v0.0.0-20261010173908-143ff4f76f75 h1:7H6vcrK667iu0IfBjuuU/8PClp3pDDdN75qpMCTxwu0=
+github.com/belowLevel/find-domain v0.0.0-20261010173908-143ff4f76f75/go.mod h1:6emtBUDxCHNJ8fjVzVzNWu+31r3LW5kefSTTALqaX1M=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/maxmind/mmdbwriter v0.0.0-20220830183856-fffdfa44ff0b h1:wkAKuhM2q+6rlDxWzzDZUU1IkyHJvO5ejtQaJLjHWxg=
