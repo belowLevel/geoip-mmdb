@@ -5,6 +5,7 @@ import (
 	"geoip-mmdb/generate_asn_mmdb"
 	"geoip-mmdb/generate_city_mmdb"
 	"geoip-mmdb/generate_country_mmdb"
+	"geoip-mmdb/generate_country_mmdb_lite"
 	"geoip-mmdb/merge_ip2region"
 	"geoip-mmdb/merge_pure_city_mmdb"
 	"geoip-mmdb/reader"
@@ -30,6 +31,10 @@ func Test_Generate_Country(t *testing.T) {
 
 func Test_Generate_Merge_City(t *testing.T) {
 	merge_pure_city_mmdb.Generatemmdb("../merge_pure_city_mmdb")
+}
+
+func Test_Generate_Country_Lite(t *testing.T) {
+	generate_country_mmdb_lite.Generatemmdb("../generate_country_mmdb")
 }
 
 //	func Test_Generate_Merge_City2(t *testing.T) {

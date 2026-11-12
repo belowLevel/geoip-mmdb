@@ -75,8 +75,12 @@ runs:
         go test -run TestConvertDbToTxt generate_test/generate_test.go
         cp ip2region.csv merge_pure_city_mmdb/
 
+        echo "go test -run Test_Generate_Asn generate_test/generate_test.go"
         go test -run Test_Generate_Asn generate_test/generate_test.go
+        echo "go test -run Test_Generate_Country generate_test/generate_test.go"
         go test -run Test_Generate_Country generate_test/generate_test.go
+        echo "go test -run Test_Generate_Country_Lite generate_test/generate_test.go"
+        go test -run Test_Generate_Country_Lite generate_test/generate_test.go
         go test -timeout 0 -run Test_Generate_Merge_City generate_test/generate_test.go
 
         GOARCH=amd64 GOOS=windows GOAMD64=v3 CGO_ENABLED=0 go build -trimpath -o bin/geoip-mmdb.exe main.go
@@ -86,15 +90,7 @@ runs:
         echo "RELEASE_BODY=- GeoLite2 databases Updated($GeoLite2UpdatedDate)\r\n- $pureUpdatedDate" >> $GITHUB_ENV
 
         mv *.mmdb bin/
-        cd bin/
-        zip -r geoip-mmdb.exe.zip geoip-mmdb.exe
-        zip -r geoip-mmdb.zip geoip-mmdb
-        zip -r GeoLite2-ASN.zip GeoLite2-ASN.mmdb
-        zip -r GeoLite2-City.zip GeoLite2-City.mmdb
-        zip -r GeoLite2-Country.zip GeoLite2-Country.mmdb
-        zip -r GeoLite2-merge-City.zip GeoLite2-merge-City.mmdb
-        zip -r GeoLite2-All.zip GeoLite2-ASN.mmdb GeoLite2-Country.mmdb GeoLite2-merge-City.mmdb
-        rm -rf geoip-mmdb.exe  geoip-mmdb *.mmdb
+        ls bin/*
         ls -alh
 
       shell: bash
