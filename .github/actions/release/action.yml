@@ -1,0 +1,29 @@
+name: release-action
+description: for release
+inputs:
+  licenseKey:
+    description: '`LicenseKey` is from your MaxMind account'
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@v7
+      with:
+        go-version: 'stable'
+        check-latest: true
+    - run: |
+        cd $GITHUB_WORKSPACE
+        go build
+        geoip-mmdb.exe -u ${{ inputs.accountId }} -p ${{ inputs.licenseKey }}
+        mkdir bin
+        mv *.mmdb bin/
+        ls bin/*
+      shell: bash
+
+    - uses: softprops/action-gh-release@v1
+      with:
+        files: bin/*
+        draft: false
+        name: ${{ env.RELEASE_NAME }}
+        body: ${{ env.RELEASE_BODY }}
+        tag_name: v1.0.0
