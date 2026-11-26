@@ -89,20 +89,15 @@ func mergeip2region(cityWriter *mmdbwriter.Tree, filename string, lite bool) {
 			Longitude:      0,
 		}
 		for _, prefix := range prefixes {
-			if newCity.IsoCode != "0" && newCity.IsoCode != "CN" {
-				continue
-			}
-			if newCity.IsoCode == "CN" {
-				c, err := dump.SearchCity(prefix.Addr())
-				if err == nil && c != nil {
-					_, _, _, _, district, longitude, latitude, accuracyRadius := dump.ExpandCity(c)
-					if district != "" {
-						newCity.District = district
-					}
-					newCity.AccuracyRadius = accuracyRadius
-					newCity.Longitude = longitude
-					newCity.Latitude = latitude
+			c, err := dump.SearchCity(prefix.Addr())
+			if err == nil && c != nil {
+				_, _, _, _, district, longitude, latitude, accuracyRadius := dump.ExpandCity(c)
+				if district != "" {
+					newCity.District = district
 				}
+				newCity.AccuracyRadius = accuracyRadius
+				newCity.Longitude = longitude
+				newCity.Latitude = latitude
 			}
 			insertCityData(prefix, newCity, cityWriter)
 		}
@@ -139,6 +134,13 @@ func RangeToCIDR(start, end string) ([]netip.Prefix, error) {
 func insertCityData(prefix netip.Prefix, city City, writer *mmdbwriter.Tree) {
 	dump.TrimLocationStr(&city.Province)
 	dump.TrimLocationStr(&city.City)
+	if city.IsoCode == "0" {
+		city.IsoCode = "private"
+		city.Country = ""
+		city.Province = ""
+		city.City = ""
+		city.District = ""
+	}
 	data := mmdbtype.Map{
 		"country":         mmdbtype.String(city.Country),
 		"province":        mmdbtype.String(city.Province),

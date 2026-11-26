@@ -13,8 +13,11 @@ runs:
         check-latest: true
     - run: |
         cd $GITHUB_WORKSPACE
-        go build
-        geoip-mmdb.exe -u ${{ inputs.accountId }} -p ${{ inputs.licenseKey }}
+        ls
+        go build  -o ./geoip-mmdb
+        chmod +x ./geoip-mmdb
+        ls
+        ./geoip-mmdb -u ${{ inputs.accountId }} -p ${{ inputs.licenseKey }}
         mkdir bin
         mv *.mmdb bin/
         ls bin/*
