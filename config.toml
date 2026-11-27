@@ -1,0 +1,72 @@
+[output]
+format = "mmdb"
+file = "GeoLite2-City-ASN.mmdb"
+
+[output.mmdb]
+database_type = "GeoLite2-City-ASN"
+description = { en = "GeoLite2 City and ASN" }
+record_size = 28
+include_reserved_networks = true
+disable_ipv4_aliasing = true
+
+[[databases]]
+name = "city"
+path = "GeoLite2-merge-City.mmdb"
+
+[[databases]]
+name = "asn"
+path = "GeoLite2-merge-ASN.mmdb"
+
+[[columns]]
+name = "country"
+database = "city"
+path = ["country"]
+output_path = ["country"]
+
+[[columns]]
+name = "province"
+database = "city"
+path = ["province"]
+output_path = ["province"]
+
+[[columns]]
+name = "city"
+database = "city"
+path = ["city"]
+output_path = ["city"]
+
+[[columns]]
+name = "district"
+database = "city"
+path = ["district"]
+output_path = ["district"]
+
+[[columns]]
+name = "iso_code"
+database = "city"
+path = ["iso_code"]
+output_path = ["iso_code"]
+
+[[columns]]
+name = "accuracy_radius"
+database = "city"
+path = ["accuracy_radius"]
+output_path = ["accuracy_radius"]
+
+[[columns]]
+name = "latitude"
+database = "city"
+path = ["latitude"]
+output_path = ["latitude"]
+
+[[columns]]
+name = "longitude"
+database = "city"
+path = ["longitude"]
+output_path = ["longitude"]
+
+[[columns]]
+name = "organization"
+database = "asn"
+path = ["autonomous_system_organization"]
+output_path = ["organization"]

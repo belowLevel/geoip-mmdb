@@ -7,7 +7,24 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-	cityReader, err := maxminddb.Open("../GeoLite2-merge-City-lite.mmdb")
+	cityReader, err := maxminddb.Open("GeoLite2-merge-City.mmdb")
+	if err != nil {
+		t.Fatal(err)
+	}
+	record := &City{}
+	ipaddr, err := netip.ParseAddr("114.114.114.114")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = cityReader.Lookup(ipaddr).Decode(record)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%v", record)
+}
+
+func TestSearch2(t *testing.T) {
+	cityReader, err := maxminddb.Open("GeoLite2-City-ASN-lite.mmdb")
 	if err != nil {
 		t.Fatal(err)
 	}

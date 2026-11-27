@@ -18,6 +18,14 @@ runs:
         chmod +x ./geoip-mmdb
         ls
         ./geoip-mmdb -u ${{ inputs.accountId }} -p ${{ inputs.licenseKey }}
+        git clone https://github.com/belowLevel/mmdbconvert.git
+        cd mmdbconvert
+        go install ./cmd/mmdbconvert
+        cd ..
+        mmdbconvert config.toml
+        ls
+        ./geoip-mmdb -l
+        ls
         mkdir bin
         mv *.mmdb bin/
         ls bin/*
